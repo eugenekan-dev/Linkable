@@ -1,5 +1,3 @@
-library linkable;
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:linkable/constants.dart';
@@ -39,6 +37,8 @@ class Linkable extends StatelessWidget {
 
   final void Function(String value)? onEmailTap;
 
+  final TextSpan Function(String value, GestureRecognizer function)? mobileSpan;
+
   final String? mobileRegExp;
 
   List<Parser> _parsers = <Parser>[];
@@ -61,6 +61,7 @@ class Linkable extends StatelessWidget {
     this.onTelephoneTap,
     this.onLinkTap,
     this.onEmailTap,
+    this.mobileSpan,
   }) : super(key: key);
 
   @override
@@ -111,6 +112,12 @@ class Linkable extends StatelessWidget {
   }
 
   TextSpan _link(String text, String type) {
+    if (type == tel && mobileSpan != null) {
+      return mobileSpan!(
+        text,
+        TapGestureRecognizer()..onTap = () => _onTap(text, type),
+      );
+    }
     return TextSpan(
       text: text,
       style: TextStyle(color: linkColor),
